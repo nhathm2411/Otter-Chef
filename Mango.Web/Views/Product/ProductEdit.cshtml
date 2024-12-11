@@ -1,0 +1,102 @@
+﻿@model ProductDto
+
+@{
+    Layout = "~/Views/Shared/_Layout_Admin.cshtml";
+}
+
+<form asp-action="ProductEdit" enctype="multipart/form-data">
+    <br />
+    <div class="container border p-4 shadow-sm" style="background-color: #f8f5f2;">
+        <h1 class="text-center" style="color: #a3745e;">Edit Product</h1>
+        <input hidden asp-for="ProductId" />
+        <hr class="mb-4" style="border-top: 3px solid #a3745e;" />
+        
+        <div class="row">
+            <div class="col-10">
+                <div class="row">
+                    <!-- Name Field -->
+                    <div class="col-2">
+                        <label class="control-label pt-2" style="font-size:20px; color: #a3745e;">Name</label>
+                    </div>
+                    <div class="col-10 pb-3">
+                        <input asp-for="Name" class="form-control" style="border-color: #cfa671;" />
+                        <span asp-validation-for="Name" class="text-danger"></span>
+                    </div>
+
+                    <!-- Category Field -->
+                    <div class="col-2">
+                        <label class="control-label pt-2" style="font-size:20px; color: #a3745e;">Category</label>
+                    </div>
+                    <div class="col-10 pb-3">
+                        <select asp-for="CategoryId" class="form-control" style="border-color: #cfa671;" asp-items="ViewBag.CategoryList">
+                            <option disabled selected>-- Select Category --</option>
+                        </select>
+                        <span asp-validation-for="CategoryId" class="text-danger"></span>
+                    </div>
+
+                    <!-- Description Field -->
+                    <div class="col-2">
+                        <label class="control-label pt-2" style="font-size:20px; color: #a3745e;">Description</label>
+                    </div>
+                    <div class="col-10 pb-3">
+                        <textarea asp-for="Description" class="form-control" rows="5" style="border-color: #cfa671;"></textarea>
+                        <span asp-validation-for="Description" class="text-danger"></span>
+                    </div>
+
+                    <!-- Price Field -->
+                    <div class="col-2">
+                        <label class="control-label pt-2" style="font-size:20px; color: #a3745e;">Price</label>
+                    </div>
+                    <div class="col-10 pb-3">
+                        <input asp-for="Price" class="form-control" style="border-color: #cfa671;" />
+                        <span asp-validation-for="Price" class="text-danger"></span>
+                    </div>
+
+                    <!-- Custom Image Field -->
+                    <div class="col-2">
+                        <label class="control-label pt-2" style="font-size:20px; color: #a3745e;">Image</label>
+                    </div>
+                    <div class="col-10 pb-3">
+                        <div class="input-group">
+                            <input asp-for="Image" type="file" class="form-control d-none" id="imageUpload" />
+                            <button type="button" class="btn" style="background-color:#cfa671; color:white;" onclick="document.getElementById('imageUpload').click()">Choose Image</button>
+                            <input asp-for="ImageUrl" hidden />
+                            <input asp-for="ImageLocalPath" hidden />
+                        </div>
+                        <span asp-validation-for="Image" class="text-danger"></span>
+                    </div>
+
+                    <!-- Buttons -->
+                    <div class="col-5 offset-2">
+                        <a asp-action="ProductIndex" class="btn form-control" style="background-color:#cfa671; color: white;">Back to List</a>
+                    </div>
+                    <div class="col-5">
+                        <input type="submit" value="Update" class="btn form-control" style="background-color:#a3745e; color: white;" />
+                    </div>
+                </div>
+            </div>
+
+            <!-- Image Preview -->
+            <div class="col-2">
+                <img src="@Model.ImageUrl" id="imagePreview" class="w-100 border" style="border-color: #cfa671;" alt="Product Image" />
+            </div>
+        </div>
+    </div>
+</form>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <script>
+        // Preview image after choosing file
+        document.getElementById('imageUpload').addEventListener('change', function(event) {
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    document.getElementById('imagePreview').src = e.target.result;
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+    </script>
+}

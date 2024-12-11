@@ -1,0 +1,473 @@
+﻿@using Mango.Web.Utility
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Otter Chef</title>
+    <meta name="keywords" content="">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    @* <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.css" /> *@
+    <link rel="stylesheet" href="//cdn.datatables.net/2.1.7/css/dataTables.dataTables.min.css" />
+    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/css/toastr.css" />
+    @* <link rel="stylesheet" href="~/Mango.Web.styles.css" asp-append-version="true" /> *@
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+
+    <!-- Site Icons -->
+    <link rel="shortcut icon" href="~/images/otterchef-logo.png" type="image/x-icon">
+    <link rel="apple-touch-icon" href="~/images/otterchef-logo.png">
+
+    <!-- Bootstrap CSS -->
+    <link href="~/css/bootstrap.min.css" rel="stylesheet" />
+    <!-- Site CSS -->
+    <link href="~/css/style.css" rel="stylesheet" />
+    <!-- Responsive CSS -->
+    <link href="~/css/responsive.css" rel="stylesheet" />
+    <!-- Custom CSS -->
+    <link href="~/css/custom.css" rel="stylesheet" />
+</head>
+<style>
+    .search_input:-webkit-autofill,
+    .search_input:-webkit-autofill:hover,
+    .search_input:-webkit-autofill:focus,
+    .search_input:-webkit-autofill:active {
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: #ffffff;
+        transition: background-color 5000s ease-in-out 0s;
+        box-shadow: inset 0 0 0px 1000px rgba(35, 35, 35, 0);
+    }
+
+    .searchbar {
+        margin-bottom: auto;
+        margin-top: auto;
+        height: 60px;
+        background-color: #cfa671; /* Màu chủ đạo của bạn */
+        border-radius: 30px;
+        padding: 10px;
+        display: flex;
+        align-items: center;
+    }
+
+        .searchbar bi-search {
+            color: white;
+        }
+
+    .search_input {
+        color: white;
+        border: 0;
+        outline: 0;
+        background: none;
+        /* width: 0; */
+        width: 450px;
+        caret-color: transparent;
+        line-height: 40px;
+        transition: width 0.4s linear;
+        flex-grow: 1;
+        padding: 0 10px;
+    }
+
+        .search_input::placeholder {
+            color: white;
+            opacity: 1;
+        }
+
+        .searchbar:hover > .search_input,
+        .search_input:focus,
+        .search_input:not(:placeholder-shown) {
+            width: 450px;
+            caret-color: red;
+            transition: width 0.4s linear;
+        }
+
+    .searchbar:hover > .search_icon {
+        background: #A3745E;
+        opacity: 0.5;
+        color: #e74c3c;
+        cursor: pointer;
+    }
+
+    .search_icon {
+        height: 40px;
+        width: 40px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        border-radius: 50%;
+        color: white;
+        text-decoration: none;
+    }
+
+</style>
+<body>
+    <header class="top-navbar" style="position: fixed; top: 0; left: 0;z-index: 99;">
+        <nav style="background-color:#e8e4df!important" class="navbar navbar-expand-lg navbar-light bg-light">
+            <div class="container">
+                <a class="navbar-brand" asp-controller="Home" asp-action="Index">
+                    <img src="~/images/otterchef-logo.png" alt="" />
+                </a>
+                <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbars-rs-food" aria-controls="navbars-rs-food" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="navbars-rs-food">
+                    <ul class="navbar-nav mr-auto">
+                        <li class="nav-item">
+                            <a class="nav-link my-4" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link my-4" asp-controller="Product" asp-action="Index">Menu</a>
+                        </li>
+
+
+                        
+                        <li class="nav-item">
+                            <div class="container h-100">
+                                <div class="d-flex justify-content-center h-100">
+                                    <div class="searchbar">
+                                        <input value="@ViewBag.Keyword" id="keywordInput" class="search_input" type="text" name="" placeholder="Search...">
+                                        <a onclick="searchWithKeyword()" class="search_icon" style="color: white;"><i class="bi bi-search"></i></a>
+                                    </div>
+                                </div>
+                            </div>
+                        </li>
+
+                    </ul>
+                    <ul class="navbar-nav ml-auto">
+                        @if (!User.Identity.IsAuthenticated)
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link" asp-controller="Auth" asp-action="Login">Login</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" asp-controller="Auth" asp-action="Register">Register</a>
+                            </li>
+                        }
+                        else
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link" asp-controller="Cart" asp-action="RemoveCouponBeforeCart">
+                                    &nbsp; <i class="bi bi-cart position-relative ">
+                                        <span id="quantityCart" class="px-1 position-absolute rounded-circle" style="font-family: Arial;top: 0px;right: -20%;font-size:10px">
+                                        </span>
+                                    </i>&nbsp;
+                                </a>
+                            </li>
+                            <li class="nav-item dropdown">
+                                <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" data-toggle="dropdown"><i class="bi bi-person-circle"></i>@* Hello, @User.Identity.Name *@</a>
+
+                                <ul class="dropdown-menu" aria-labelledby="navbarDropdown" style="min-width: 11rem;">
+                                    <li class="nav-item">
+                                        <a class="nav-link" asp-controller="Auth" asp-action="UpdateProfile">Profile</a>
+                                    </li> 
+                                    <li class="nav-item">
+                                        <a class="nav-link" asp-controller="Auth" asp-action="ChangePassword">Change Password</a>
+                                    </li> 
+                                    <li class="nav-item">
+                                        <a class="nav-link" asp-controller="Order" asp-action="OrderIndex">Order History</a>
+                                    </li>
+
+                                    <li><hr class="dropdown-divider"></li>
+
+                                    <li class="nav-item">
+                                        <a class="nav-link" asp-controller="Auth" asp-action="Logout">Logout</a>
+                                    </li>
+                                </ul>
+                            </li>
+                            
+                           
+                        }
+                    </ul>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <div style="margin-top: 108px">
+        @RenderBody()
+    </div>
+    <partial name="_Notification" />
+
+
+    <!-- Start Footer -->
+    <footer class="footer-area bg-f">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-3 col-md-6">
+                    <h3>About Us</h3>
+                    <p>Integer cursus scelerisque ipsum id efficitur. Donec a dui fringilla, gravida lorem ac, semper magna. Aenean rhoncus ac lectus a interdum. Vivamus semper posuere dui, at ornare turpis ultrices sit amet. Nulla cursus lorem ut nisi porta, ac eleifend arcu ultrices.</p>
+                </div>
+                <div class="col-lg-3 col-md-6">
+                    <h3>Opening hours</h3>
+                    <p><span class="text-color">Monday: </span>Closed</p>
+                    <p><span class="text-color">Tue-Wed :</span> 9:Am - 10PM</p>
+                    <p><span class="text-color">Thu-Fri :</span> 9:Am - 10PM</p>
+                    <p><span class="text-color">Sat-Sun :</span> 5:PM - 10PM</p>
+                </div>
+                <div class="col-lg-3 col-md-6">
+                    <h3>Contact information</h3>
+                    <p class="lead">Ipsum Street, Lorem Tower, MO, Columbia, 508000</p>
+                    <p class="lead"><a href="#">+01 2000 800 9999</a></p>
+                    <p><a href="#"> info@admin.com</a></p>
+                </div>
+                <div class="col-lg-3 col-md-6">
+                    <h3>Subscribe</h3>
+                    <div class="subscribe_form">
+                        <form class="subscribe_form">
+                            <input name="EMAIL" id="subs-email" class="form_input" placeholder="Email Address..." type="email">
+                            <button type="submit" class="submit">SUBSCRIBE</button>
+                            <div class="clearfix"></div>
+                        </form>
+                    </div>
+                    <ul class="list-inline f-social">
+                        <li class="list-inline-item"><a href="#"><i class="fa fa-facebook" aria-hidden="true"></i></a></li>
+                        <li class="list-inline-item"><a href="#"><i class="fa fa-twitter" aria-hidden="true"></i></a></li>
+                        <li class="list-inline-item"><a href="#"><i class="fa fa-linkedin" aria-hidden="true"></i></a></li>
+                        <li class="list-inline-item"><a href="#"><i class="fa fa-google-plus" aria-hidden="true"></i></a></li>
+                        <li class="list-inline-item"><a href="#"><i class="fa fa-instagram" aria-hidden="true"></i></a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="copyright">
+            <div class="container">
+                <div class="row">
+                    <div class="col-lg-12">
+                        <p class="company-name">
+                            All Rights Reserved. &copy; 2018 <a href="#">Yamifood Restaurant</a> Design By :
+                            <a href="https://html.design/">html design</a>
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </footer>
+    <!-- End Footer -->
+
+
+    <a href="#" id="back-to-top" title="Back to top" style="display: none;">&uarr;</a>
+
+    <!-- ALL JS FILES -->
+    <script src="~/js/jquery-3.2.1.min.js"></script>
+    <script src="~/js/popper.min.js"></script>
+    <script src="~/js/bootstrap.min.js"></script>
+    <!-- ALL PLUGINS -->
+    <script src="~/js/jquery.superslides.min.js"></script>
+    <script src="~/js/images-loded.min.js"></script>
+    <script src="~/js/isotope.min.js"></script>
+    <script src="~/js/baguettebox.min.js"></script>
+    <script src="~/js/form-validator.min.js"></script>
+    <script src="~/js/contact-form-script.js"></script>
+    <script src="~/js/custom.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/jwt-decode@3.1.2/build/jwt-decode.min.js"></script>
+
+
+    @* <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script> *@
+    <script src="//cdn.datatables.net/2.1.7/js/dataTables.min.js"></script>
+    @* <script src="~/js/site.js" asp-append-version="true"></script> *@
+    @await RenderSectionAsync("Scripts", required: false)
+    <script type="text/javascript">
+        $(document).ready(function () {
+
+            // Function to get the JWT token from cookies
+            function getJWTTokenFromCookie() {
+                const cookieString = document.cookie;
+                const cookies = cookieString.split('; ');
+
+                const jwtCookie = cookies.find(cookie => cookie.startsWith('JWTToken='));
+
+                if (jwtCookie) {
+                    return jwtCookie.split('=')[1];
+                }
+
+                console.error("JWT token not found in cookies!");
+                return null;
+            }
+
+            function getSubClaimFromJWT() {
+                const token = getJWTTokenFromCookie();
+
+                if (token) {
+                    const decodedToken = jwt_decode(token);
+                    return decodedToken.sub; // Or any other claim you need
+                }
+
+                return null;
+            }
+
+            // Example usage
+            const userid = getSubClaimFromJWT();
+
+            if (userid) {
+                $.ajax({
+                    url: "https://localhost:7003/api/cart/GetCart/" + userid,
+                    type: "get",
+                    contentType: "application/json",
+                    success: function (result) {
+                        if (!result.isSuccess) {
+                            $("#quantityCart").removeClass("badge badge-danger").hide();
+                        } else {
+                            const quantityOfCart = result.result.cartDetails.length;
+                            $("#quantityCart").text(quantityOfCart).addClass("badge badge-danger").show();
+                        }
+                    },
+                    error: function (xhr) {
+                        console.error(xhr);
+                    }
+                });
+            }
+
+            // Function to update price filter count
+            function updatePriceFilterCount(products) {
+                console.log(products);
+                const allCount = products.length;
+                const price1Count = products.filter(p => p.price >= 3 && p.price <= 5).length;
+                const price2Count = products.filter(p => p.price >= 6 && p.price <= 10).length;
+                const price3Count = products.filter(p => p.price >= 11 && p.price <= 20).length;
+                const price4Count = products.filter(p => p.price >= 21).length;
+
+                // Update the filter count display
+                $('#price-all').closest('.custom-control').find('span').html(allCount);
+                $('#price-1').closest('.custom-control').find('span').html(price1Count);
+                $('#price-2').closest('.custom-control').find('span').html(price2Count);
+                $('#price-3').closest('.custom-control').find('span').html(price3Count);
+                $('#price-4').closest('.custom-control').find('span').html(price4Count);
+            }
+
+            function isProductIndexPage() {
+                return window.location.pathname.includes("/Product");
+            }
+
+            // Function to handle search icon click
+            function handleSearch() {
+                const keyword = $('#keywordInput').val().trim();
+
+                if (!isProductIndexPage()) {
+                    // Redirect to Product/Index with or without keyword
+                    if (keyword) {
+                        window.location.href = `/Product/Index?keyword=${encodeURIComponent(keyword)}`;
+                    } else {
+                        window.location.href = '/Product';
+                    }
+                } else {
+                    // Already on Product/Index page, search via AJAX
+                    searchWithAjax(keyword);
+                }
+            }
+
+            // Attach event listener to search icon click
+            $(".search_icon").click(function () {
+                handleSearch();
+            });
+            $(".search_input").on("keypress", function (event) {
+                if (event.which === 13) { // Kiểm tra mã phím Enter (13)
+                    handleSearch();
+                }
+            });
+
+            // AJAX search function
+            function searchWithAjax(keyword) {
+                const categories = getCategories().then(categories => {
+                    return getProducts(categories).then(products => {
+                        const searchResult = products.filter(p => p.name.toLowerCase().includes(keyword.toLowerCase()));
+                        updatePriceFilterCount(searchResult);
+                        renderProductList(searchResult);
+                    });
+                });
+            }
+
+            // Function to get categories
+            function getCategories() {
+                return $.ajax({
+                    url: "https://localhost:7777/api/category",
+                    type: "get",
+                    contentType: "application/json"
+                }).then(response => response.result)
+                    .catch(xhr => {
+                        console.error(xhr);
+                        return [];
+                    });
+            }
+
+            // Function to get products and assign categories to them
+            function getProducts(categories) {
+                return $.ajax({
+                    url: "https://localhost:7777/api/product",
+                    type: "get",
+                    contentType: "application/json"
+                }).then(response => {
+                    const products = response.result;
+                    // Assign category to each product
+                    products.forEach(product => {
+                        product.category = categories.find(c => c.categoryId === product.categoryId) || null;
+                    });
+                    return products;
+                }).catch(xhr => {
+                    console.error(xhr);
+                    return [];
+                });
+            }
+
+            // Function to render the product list
+            function renderProductList(products) {
+                const totalProducts = products.length;
+                const productContainer = $('#productContainer');
+                const pagingControls = $('.pagination-controls');
+
+                productContainer.empty(); // Clear previous content
+
+                if (totalProducts === 0) {
+                    productContainer.append(`
+                            <div class="col-12 text-center">
+                                <p>No products found.</p>
+                            </div>
+                        `);
+                    pagingControls.hide();
+                } else {
+                    products.forEach(product => {
+                        productContainer.append(`
+                                <div class="col-lg-4 col-md-6 col-sm-12 pb-1 product-card" data-product-id="${product.productId}">
+                                    <div class="p-0 my-3 border rounded shadow-sm" style="overflow: hidden; border-radius: 10px; position: relative; transition: transform 0.3s ease-in-out;">
+                                        <div class="card h-100">
+                                            <div class="position-relative">
+                                                <img src="${product.imageUrl}" class="card-img-top" alt="Product Image" style="object-fit: cover; height: 150px;" />
+                                                <span class="badge position-absolute" style="top: 10px; right: 10px; background-color: #d0a772; padding: 8px 12px; font-size: 14px; color: white;">${product.category?.categoryName || "Uncategorized"}</span>
+                                            </div>
+                                            <h3 class="text-white text-center py-1" style="background: linear-gradient(90deg, #a3745e, #d0a772); margin: 0; font-size: 20px;">${product.name}</h3>
+                                            <div class="card-body d-flex flex-column" style="padding: 15px;">
+                                                <div class="d-flex justify-content-between py-2 align-items-center">
+                                                    <span class="font-weight-bold" style="font-size: 20px; color: green;">${new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(product.price)}</span>
+                                                </div>
+                                                <div class="mt-auto">
+                                                    <a href="/Home/ProductDetails?productId=${product.productId}" class="btn form-control" style="background-color: #a3745e; color: white; padding: 10px 0; font-size: 14px;">Details</a>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            `);
+                    });
+                    $('#checkboxId').prop('checked', true);  // To check
+                    $('#checkboxId').prop('checked', false); // To uncheck
+                    pagingControls.show();
+                }
+            }
+
+            // Attach event listener for live search on input
+            if (isProductIndexPage()) {
+                $("#keywordInput").on('input', function () {
+                    const keyword = $(this).val();
+                    searchWithAjax(keyword); // Call searchWithAjax as the user types
+                });
+            }
+        });
+    </script>
+
+</body>
+</html>

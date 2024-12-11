@@ -1,0 +1,143 @@
+﻿@using Mango.Web.Models.Dto
+@model ProductDto
+
+<form method="post">
+    <input asp-for="ProductId" hidden />
+    <div class="p-4">
+        <div class="card" style="border: solid 1px #cfa671">
+            <div class="card-body">
+                <div class="rounded p-2">
+                    <div class="row">
+                        <div style="border: solid 3px #cfa671; border-radius:10px" class="col-12 col-lg-4 p-1 text-center">
+                            <img src="@Model.ImageUrl" style="border-radius:35px;" width="100%" class="rounded" />
+                        </div>
+                        <div class="col-12 col-lg-8">
+                            <div class="row ps-3">
+                                <div class="col-12">
+                                    <div style="text-align:right;line-height:100%">
+                                        <span style="background-color:#d0a772; border-radius:15%" class="badg text-white font-weight-bold p-3">@Model.Category.CategoryName</span>
+                                    </div>
+                                    <div style="padding-left:0" class="col-12 col-md-6">
+                                        <h1 style="font-size:50px" class="text-dark font-weight-bold">@Model.Name</h1>
+                                    </div>
+                                    <div style="padding-left:0; padding-bottom:50px" class="col-12 col-md-6 text-end">
+                                        <h1 style="color: green;font-size: 30px;font-weight:600">Price: @string.Format("{0:c}", Model.Price)</h1>
+                                    </div>
+                                    <div style="margin-bottom:20px">
+                                        <h3 style="font-size:30px" class="font-weight-bold p-0">Description:</h3>
+                                        <p style="font-size:20px" class="text-secondary pt-3">@Model.Description</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div style="padding-bottom:10px" class="row mx-0">
+                                <input asp-for="Count" class="form-control" min="1" />
+                                <span asp-validation-for="Count" class="text-danger"></span>
+                            </div>
+                            <div class="row">
+                                <div class="col-12 col-md-6 pb-1">
+                                    <a style="background-color:#cfa671" asp-controller="Product" asp-action="Index" class="btn btn-square form-control btn-lg text-white" style="height: 50px;">Back to List</a>
+                                </div>
+                                <div class="col-12 col-md-6">
+                                    <button style="background-color:#a3745e" type="submit" class="btn form-control btn-lg text-white" style="height: 50px;">Add to Cart</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card mt-3" style="border: solid 1px #cfa671">
+            <div class="card-body">
+                <div class="row">
+                    <!-- Left Column: Average Rating -->
+                    <div class="col-12 col-md-4 text-center">
+                        <h1>Rating Product</h1>
+                        @{
+                            // Retrieve feedback list from ViewBag
+                            var feedbackAllList = ViewBag.FeedbackList as List<FeedbackDto>;
+                            var feedbackList = feedbackAllList.Where(f => f.IsActive);
+
+                            // Calculate the average rating
+                            var averageRating = feedbackList != null && feedbackList.Any()
+                            ? feedbackList.Average(f => f.Rating)
+                            : 0;
+                        }
+                        <div class="d-flex flex-column justify-content-center align-items-center " style="font-size: 24px; height: 70%;border: solid 1px #cfa671">
+
+                            @if (averageRating > 0)
+                            {
+                                <span>
+                                    @for (int i = 0; i < (int)Math.Round(averageRating); i++)
+                                    {
+                                        <span style="font-size: 80px;" class="text-warning">&#9733;</span> <!-- Filled star icon -->
+                                    }
+                                    @for (int i = (int)Math.Round(averageRating); i < 5; i++)
+                                    {
+                                        <span style="font-size: 80px;" class="text-warning" style="color:dimgray;">&#9734;</span> <!-- Empty star icon -->
+                                    }
+                                    <span>@averageRating/5</span>
+                                </span>
+
+                                <span class="mb-5">(@feedbackList.Count() rates)</span>
+                            }
+                            else
+                            {
+                                <span class="text-muted">No rating</span>
+                            }
+                        </div>
+                    </div>
+
+                    <!-- Right Column: Feedback List -->
+                    <div class="col-12 col-md-8">
+                        <div class="cart-title text-center">
+                            <h1>Feedback</h1>
+                        </div>
+                        <div style="max-height: 300px; overflow-y: auto;">
+                            @if (feedbackList != null && feedbackList.Any())
+                            {
+                                // Sort feedback by date (most recent first) and take the top 3
+                                var sortedFeedback = feedbackList.OrderByDescending(f => f.FeedbackDate).Take(3).ToList();
+
+                                foreach (var item in sortedFeedback)
+                                {
+                                    <div class="feedback-item border p-2 mb-2" style="border-radius: 10px; border: solid 1px #d0a772;">
+                                        <div style="font-size: large;" class="font-weight-bold">
+                                            @item.User.FirstName @item.User.LastName
+                                        </div>
+                                        <div>
+                                            @if (item.Rating != 0)
+                                            {
+                                                for (int i = 0; i < item.Rating; i++)
+                                                {
+                                                    <span class="text-warning">&#9733;</span> <!-- Filled star icon -->
+                                                }
+                                                for (int i = item.Rating; i < 5; i++)
+                                                {
+                                                    <span class="text-warning" style="color:dimgray;">&#9734;</span> <!-- Empty star icon -->
+                                                }
+                                            }
+                                            else
+                                            {
+                                                <span class="text-muted">No rating</span>
+                                            }
+                                        </div>
+                                        <div>@item.Comment</div>
+                                        <div style="font-size: 12px" class="text-muted">@item.FeedbackDate.ToString("g")</div> <!-- Format the date -->
+                                    </div>
+
+                                }
+                            }
+                            else
+                            {
+                                <div class="text-center align-items-center">
+                                    <h4>No feedback available.</h4>
+                                </div>
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>

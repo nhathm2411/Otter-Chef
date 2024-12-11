@@ -1,0 +1,44 @@
+﻿@model CategoryDto
+
+@{
+    Layout = "~/Views/Shared/_Layout_Admin.cshtml";
+}
+
+<form asp-action="CategoryDelete">
+    <br />
+    <div class="container border p-4 shadow-sm" style="background-color: #f8f5f2;">
+        <h1 class="text-center" style="color: #a3745e;">Delete Category</h1>
+        <input hidden asp-for="CategoryId" />
+        <hr class="mb-4" style="border-top: 3px solid #a3745e;" />
+
+        <div class="row">
+            <!-- Category Name Field -->
+            <div class="col-2">
+                <label class="control-label pt-2" style="font-size:20px; color: #a3745e;">Category Name</label>
+            </div>
+            <div class="col-10 pb-3">
+                <input asp-for="CategoryName" disabled class="form-control" style="border-color: #cfa671;" />
+            </div>
+
+            <!-- Image URL Field -->
+            <div class="col-2">
+                <label class="control-label pt-2" style="font-size:20px; color: #a3745e;">Image URL</label>
+            </div>
+            <div class="col-10 pb-3">
+                <input asp-for="ImageUrl" disabled class="form-control" style="border-color: #cfa671;" />
+            </div>
+
+            <!-- Buttons -->
+            <div class="col-5 offset-2">
+                <a asp-action="CategoryIndex" class="btn form-control" style="background-color: #cfa671; color: white;">Back to List</a>
+            </div>
+            <div class="col-5">
+                <input type="submit" value="Delete" class="btn form-control" style="background-color: #a3745e; color: white;" />
+            </div>
+        </div>
+    </div>
+</form>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

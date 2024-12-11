@@ -1,0 +1,67 @@
+﻿@model ProductDto
+
+@{
+    Layout = "~/Views/Shared/_Layout_Admin.cshtml";
+}
+
+<form asp-action="ProductDelete">
+    <br />
+    <div class="container border p-4" style="background-color: #f5f5f5; border-radius: 8px;">
+        <h1 class="text-center" style="color: #a3745e;">Delete Product</h1>
+        <hr class="mb-4" style="border-top: 3px solid #a3745e;" />
+
+        <div class="row">
+            <!-- Name Field -->
+            <div class="col-2">
+                <label class="control-label pt-2" style="font-size:20px; color: #a3745e;">Name</label>
+            </div>
+            <div class="col-10 pb-3">
+                <input asp-for="Name" disabled class="form-control" style="border-color: #cfa671;" />
+            </div>
+
+            <!-- Category Name Field -->
+            <div class="col-2">
+                <label class="control-label pt-2" style="font-size:20px; color: #a3745e;">Category Name</label>
+            </div>
+            <div class="col-10 pb-3">
+                <input asp-for="Category.CategoryName" disabled class="form-control" style="border-color: #cfa671;" />
+            </div>
+
+            <!-- Description Field -->
+            <div class="col-2">
+                <label class="control-label pt-2" style="font-size:20px; color: #a3745e;">Description</label>
+            </div>
+            <div class="col-10 pb-3">
+                <textarea asp-for="Description" disabled class="form-control" rows="5" style="border-color: #cfa671;"></textarea>
+            </div>
+
+            <!-- Price Field -->
+            <div class="col-2">
+                <label class="control-label pt-2" style="font-size:20px; color: #a3745e;">Price</label>
+            </div>
+            <div class="col-10 pb-3">
+                <input asp-for="Price" disabled class="form-control" style="border-color: #cfa671;" />
+            </div>
+
+            <!-- Image URL Field -->
+            <div class="col-2">
+                <label class="control-label pt-2" style="font-size:20px; color: #a3745e;">Image URL</label>
+            </div>
+            <div class="col-10 pb-3">
+                <input asp-for="ImageUrl" disabled class="form-control" style="border-color: #cfa671;" />
+            </div>
+
+            <!-- Buttons -->
+            <div class="col-5 offset-2">
+                <a asp-action="ProductIndex" class="btn form-control" style="background-color: #cfa671; color: white;">Back to List</a>
+            </div>
+            <div class="col-5">
+                <input type="submit" value="Disable" class="btn btn-danger form-control" style="background-color: #a3745e; color: white;" />
+            </div>
+        </div>
+    </div>
+</form>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

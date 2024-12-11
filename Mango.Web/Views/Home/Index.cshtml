@@ -1,0 +1,281 @@
+﻿@using Mango.Web.Utility
+@model IEnumerable<ProductDto>
+
+@{
+    if (User.IsInRole(SD.RoleAdmin))
+    {
+        <script>
+            window.location.href = 'https://localhost:7255/Admin/AdminIndex';
+        </script>
+    }
+    var coupons = ViewBag.Coupons;
+}
+
+@{
+    var categories = new List<string>(); //Set
+    foreach (var item in ViewBag.Categories)
+    {
+        item.CategoryName.Replace(" ", "-");
+        categories.Add(item.CategoryName);
+    }
+}
+<form>
+    <!-- Start slides -->
+    <div id="slides" class="cover-slides" style="height: 600px">
+        <ul class="slides-container">
+            <li class="text-center">
+                <img src="~/images/slider-01.jpg" alt="">
+                <div class="container">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <h1 class="m-b-20"><strong>Welcome To <br>Otter Chef</strong></h1>
+                            <p class="m-b-40">
+                                Experience Korean food with Otter Chef<br>
+                                Enjoy dishes cooked with passion.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </li>
+            <li class="text-center">
+                <img src="~/images/slider-02.jpg" alt="">
+                <div class="container">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <h1 class="m-b-20"><strong>Welcome To <br>Otter Chef</strong></h1>
+                            <p class="m-b-40">
+                                Experience Korean food with Otter Chef<br>
+                                Enjoy dishes cooked with passion.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </li>
+            <li class="text-center">
+                <img src="~/images/slider-03.jpg" alt="">
+                <div class="container">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <h1 class="m-b-20"><strong>Welcome To <br>Otter Chef</strong></h1>
+                            <p class="m-b-40">
+                                Experience Korean food with Otter Chef<br>
+                                Enjoy dishes cooked with passion.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </li>
+            @{
+                if (coupons != null)
+                {
+                    foreach (CouponDto item in coupons)
+                    {
+                        if (item.ImageUrl != "https://placehold.co/600x400")
+                        {
+                            <li class="text-center">
+                                <img src="@item.ImageUrl" alt="">
+                                <div class="container">
+                                    <div class="row">
+                                        <div class="col-md-12">
+                                            <h1>@item.ImageUrl</h1>
+                                        </div>
+                                    </div>
+                                </div>
+                            </li>
+                        }
+                    }
+                }
+            }
+        </ul>
+        <div class="slides-navigation">
+            <a href="#" class="next"><i class="fa fa-angle-right" aria-hidden="true"></i></a>
+            <a href="#" class="prev"><i class="fa fa-angle-left" aria-hidden="true"></i></a>
+        </div>
+    </div>
+    <!-- End slides -->
+    <!-- Start Menu -->
+    <div class="menu-box">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-12">
+                    <div class="heading-title text-center">
+                        <h2>Special Menu</h2>
+                        <p>Lorem Ipsum is simply dummy text of the printing and typesetting</p>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-lg-12">
+                    <div class="special-menu text-center">
+                        <div class="button-group filter-button-group">
+                            <button class="active" data-filter="*">All</button>
+
+                            @foreach (var category in categories)
+                            {
+                                var newCateName = category.Replace(" ", "-");
+                                <button data-filter=".@newCateName">@category</button>
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row special-list">
+                @foreach (var product in Model)
+                {
+                    <div class="col-lg-4 col-md-6 special-grid @product.Category.CategoryName.Replace(" ","-")">
+                        <div class="gallery-single fix">
+                            <img style="width: 350px; height: 250px" src="@product.ImageUrl" class="img-fluid" alt="Image">
+                            <div class="why-text">
+                                <h4>@product.Name</h4>
+                                <h5 style="text-align:left; color: green; padding-top: 90px">@string.Format("{0:c}", product.Price)</h5>
+                                <a style="background-color:#a3745e" asp-action="ProductDetails" asp-route-productId="@product.ProductId"
+                                   class="btn form-control text-white">Details</a>
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+    <!-- End Menu -->
+    <!-- Start Gallery -->
+    @*  <div class="gallery-box">
+    <div class="container-fluid">
+    <div class="row">
+    <div class="col-lg-12">
+    <div class="heading-title text-center">
+    <h2>Gallery</h2>
+    <p>Picture of foods</p>
+    </div>
+    </div>
+    </div>
+    <div class="tz-gallery">
+    <div class="row">
+    @foreach (var product in Model)
+    {
+    <div class="col-sm-12 col-md-4 col-lg-4">
+    <a class="lightbox" href="#">
+    <img class="img-fluid" src="@product.ImageUrl" alt="Gallery Images">
+    </a>
+    </div>
+    }
+    </div>
+    </div>
+    </div>
+    </div> *@
+    <!-- End Gallery -->
+    <!-- Start QT -->
+    <div class="qt-box qt-background">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-8 ml-auto mr-auto text-left">
+                    <p class="lead ">
+                        " If you're not the one cooking, stay out of the way and compliment the chef. "
+                    </p>
+                    <span class="lead">Michael Strahan</span>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- End QT -->
+    <!-- Start About -->
+    <div class="about-section-box">
+        <div class="container">
+            <div class="row justify-content-md-center">
+                <div class="text-center">
+                    <h2>Our Team</h2>
+                    <p>We are a group of innovative, experienced, and proficient teams. You will love to collaborate with us.</p>
+                    <hr class="w-50 mx-auto mb-4 border-dark-subtle">
+                </div>
+            </div>
+        </div>
+
+        <div class="container overflow-hidden">
+            <div class="row gy-4 gx-xxl-5 justify-content-center">
+                <div class="col-2">
+                    <div class="card border-0 border-bottom border-primary shadow-sm overflow-hidden">
+                        <div class="card-body p-0">
+                            <figure class="m-0 p-0">
+                                <img class="img-fluid" loading="lazy" src="~/images/aboutus-thanhntt.jpg" alt="Nguyen Tran Trung Thanh" style="object-fit: cover; width: 100%; height: 200px;">
+                                <figcaption class="m-0 p-4">
+                                    <h4 class="mb-1">Nguyen Tran Trung Thanh</h4>
+                                    <p class="text-secondary mb-0">Team Member</p>
+                                </figcaption>
+                            </figure>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-2">
+                    <div class="card border-0 border-bottom border-primary shadow-sm overflow-hidden">
+                        <div class="card-body p-0">
+                            <figure class="m-0 p-0">
+                                <img class="img-fluid" loading="lazy" src="~/images/aboutus-khoadd.jpg" alt="Do Dang Khoa" style="object-fit: cover; width: 100%; height: 200px;">
+                                <figcaption class="m-0 p-4">
+                                    <h4 class="mb-1">Do Dang Khoa</h4>
+                                    <p class="text-secondary mb-0">Team Member</p>
+                                </figcaption>
+                            </figure>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-2">
+                    <div class="card border-0 border-bottom border-primary shadow-sm overflow-hidden">
+                        <div class="card-body p-0">
+                            <figure class="m-0 p-0">
+                                <img class="img-fluid" loading="lazy" src="~/images/aboutus-nhutvm.jpg" alt="Vo Minh Nhut" style="object-fit: cover; width: 100%; height: 200px;">
+                                <figcaption class="m-0 p-4">
+                                    <h4 class="mb-1">Vo Minh Nhut</h4>
+                                    <p class="text-secondary mb-0">Team Leader</p>
+                                </figcaption>
+                            </figure>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-2">
+                    <div class="card border-0 border-bottom border-primary shadow-sm overflow-hidden">
+                        <div class="card-body p-0">
+                            <figure class="m-0 p-0">
+                                <img class="img-fluid" loading="lazy" src="~/images/aboutus-nhathm.jpg" alt="Ho Minh Nhat" style="object-fit: cover; width: 100%; height: 200px;">
+                                <figcaption class="m-0 p-4">
+                                    <h4 class="mb-1">Ho Minh Nhat</h4>
+                                    <p class="text-secondary mb-0">Team Member</p>
+                                </figcaption>
+                            </figure>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-2">
+                    <div class="card border-0 border-bottom border-primary shadow-sm overflow-hidden">
+                        <div class="card-body p-0">
+                            <figure class="m-0 p-0">
+                                <img class="img-fluid" loading="lazy" src="~/images/aboutus-nhunh.jpg" alt="Nguyen Huynh Nhu" style="object-fit: cover; width: 100%; height: 200px;">
+                                <figcaption class="m-0 p-4">
+                                    <h4 class="mb-1">Nguyen Huynh Nhu</h4>
+                                    <p class="text-secondary mb-0">Team Member</p>
+                                </figcaption>
+                            </figure>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <style>
+        .card {
+            transition: transform 0.5s ease;
+        }
+
+            .card:hover {
+                transform: scale(1.1);
+            }
+    </style>
+
+    <!-- End About -->
+
+</form>

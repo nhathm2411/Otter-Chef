@@ -1,0 +1,66 @@
+﻿@using Mango.Web.Models.Dto
+@model FeedbackDto;
+
+@{
+    var userData = ViewBag.UserData as UserDto;
+    var productData = ViewBag.ProductData as ProductDto;
+}
+
+<form asp-action="FeedbackCreate" method="post">
+    <br />
+    <div class="container border p-4 shadow-lg rounded">
+        <h1 class="text-primary text-center mb-4">Feedback</h1>
+        <hr />
+        <div class="text-center mb-3">
+            @if (!string.IsNullOrEmpty(productData.ImageUrl))
+            {
+                <img src="@productData.ImageUrl" alt="@productData.Name" class="img-fluid" style="max-height: 200px; max-width: 100%; object-fit: contain;" />
+            }
+            else
+            {
+                <p>No image available for this product.</p>
+            }
+        </div>
+        <div class="row">
+            <input type="hidden" asp-for="@Model.OrderDetailId" />
+            <input type="hidden" asp-for="@Model.UserId" />
+
+            <div class="col-12 mb-3">
+                <label class="control-label pt-2" for="fullName" style="font-size: 18px;">Full Name</label>
+                <input id="fullName" readonly value="@(userData.FirstName + " " + userData.LastName)" class="form-control" />
+            </div>
+
+            <div class="col-12 mb-3">
+                <label class="control-label pt-2" for="productName" style="font-size: 18px;">Product Name</label>
+                <input id="productName" readonly value="@productData.Name" class="form-control" />
+            </div>
+
+            <div class="col-12 mb-3">
+                <label class="control-label pt-2" for="rating" style="font-size: 18px;">Rating</label>
+                <div class="form-control" id="rating">
+                    @for (int i = 1; i <= Model.Rating; i++)
+                    {
+                        <span>★</span>
+                    }
+                    @for (int i = Model.Rating + 1; i <= 5; i++)
+                    {
+                        <span>☆</span>
+                    }
+                </div>
+            </div>
+
+            <div class="col-12 mb-3">
+                <label class="control-label pt-2" for="comment" style="font-size: 18px;">Comment</label>
+                <textarea readonly asp-for="Comment" class="form-control" id="comment" rows="4" placeholder="Your feedback here..."></textarea>
+            </div>
+
+            <div class="col-12">
+                <a asp-controller="Order" asp-action="OrderDetail" asp-route-orderId="@ViewBag.OrderHeaderId" class="btn btn-outline-secondary form-control">Back to List</a>
+            </div>
+        </div>
+    </div>
+</form>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

@@ -1,0 +1,150 @@
+﻿@model OrderHeaderDto
+@using Mango.Web.Models.Dto;
+@using Mango.Web.Utility;
+
+@{
+    if (User.IsInRole(SD.RoleAdmin))
+    {
+        Layout = "~/Views/Shared/_Layout_Admin.cshtml";
+    }
+}
+
+<form method="post">
+    <br />
+    <input asp-for="OrderHeaderId" hidden />
+    <div class="container">
+        <div class="card-header bg-secondary bg-gradient d-flex align-items-center justify-content-center py-3 text-center">
+            <a asp-action="OrderIndex" class="mx-2 display-6" style="padding: 0 5px;">
+                <i class="fa-solid fa-arrow-left" style="color: white"></i>
+            </a>
+            <h1 class="text-white m-0" style="flex-grow: 1; text-align: center;">Order List</h1>
+        </div>
+
+        <div class="card-body">
+            <div class="container rounded p-2">
+                <div class="row">
+                    <div class="col-12 col-lg-6 pb-4">
+                        <div class="row my-1">
+                            <div class="col-3">Name</div>
+                            <div class="col-9">
+                                <input asp-for="Name" readonly class="form-control" />
+                            </div>
+                        </div>
+                        <div class="row my-1">
+                            <div class="col-3">Phone</div>
+                            <div class="col-9">
+                                <input asp-for="Phone" readonly class="form-control" />
+                            </div>
+                        </div>
+
+                        <div class="row my-1">
+                            <div class="col-3">Email</div>
+                            <div class="col-9">
+                                <input asp-for="Email" readonly class="form-control" />
+                            </div>
+                        </div>
+
+                        <div class="row my-1">
+                            <div class="col-3">Order Date</div>
+                            <div class="col-9">
+                                <input value="@Model.OrderTime.ToShortDateString()" readonly class="form-control" />
+                            </div>
+                        </div>
+                        @if (User.IsInRole(SD.RoleAdmin))
+                        {
+                            <div class="row my-1">
+                                <div class="col-3">Session ID</div>
+                                <div class="col-9">
+                                    <input asp-for="StripeSessionId" readonly class="form-control" />
+                                </div>
+                            </div>
+                            <div class="row my-1">
+                                <div class="col-3">Payment Intent ID</div>
+                                <div class="col-9">
+                                    <input asp-for="PaymentIntentId" readonly class="form-control" />
+                                </div>
+                            </div>
+                        }
+
+                        <div class="row my-1">
+                            <div class="col-3">Order Status</div>
+                            <div class="col-9">
+                                <input asp-for="Status" readonly class="form-control" />
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-12 col-lg-5 offset-lg-1">
+                        <label class="bg-info text-dark text-center form-control my-2">Order Status - @Model.Status</label>
+
+                        <ul class="list-group mb-3">
+                            @{
+                                // Cast ViewBag.FeedbackList to a List<FeedbackDto>
+                                var feedbackList = ViewBag.FeedbackList as List<FeedbackDto>;
+                            }
+                            @foreach (var detail in Model.OrderDetails)
+                            {
+
+                                <li class="list-group-item d-flex justify-content-between p-2">
+                                    <div class="row container">
+                                        <div class="col-8">
+                                            <h6 class="my-0">@detail.ProductName</h6>
+                                            <small class="text-muted">Price : @detail.Price.ToString("c")</small> <br />
+                                            <small class="text-muted">Quantity : @detail.Count</small>
+                                        </div>
+                                        <div class="col-4 text-end">
+                                            <p class="text-success">@((detail.Count * detail.Price).ToString("c"))</p>
+                                            @* check if that item is already feedbacked *@
+                                            @if (User.IsInRole(SD.RoleCustomer))
+                                            {
+                                                @if (feedbackList != null && !feedbackList.Any(fb => fb.OrderDetailId == detail.OrderDetailsId) && Model.Status == SD.Status_Completed)
+                                                {
+                                                    <a asp-controller="Feedback" asp-action="FeedbackCreate" asp-route-orderDetailId="@detail.OrderDetailsId" class="btn btn-outline-success">Feedback</a>
+                                                }
+                                                else if (feedbackList.Any(fb => fb.OrderDetailId == detail.OrderDetailsId))
+                                                {
+
+                                                        var feedback = feedbackList.FirstOrDefault(fb => fb.OrderDetailId == detail.OrderDetailsId);
+                                                        if (feedback != null)
+                                                        {
+                                                            <a style="padding:5px;" asp-controller="Feedback" asp-action="FeedbackDetail" asp-route-feedbackId="@feedback.FeedbackId" class="btn btn-outline-info">View Feedback</a>
+                                                        }
+                                                    }
+                                                }
+
+                                        </div>
+                                    </div>
+                                </li>
+                            }
+                            <li class="list-group-item bg-primary">
+                                <div class="row container">
+                                    <div class="col-6">
+                                        <h5 class="text-white">TOTAL</h5>
+                                    </div>
+                                    <div class="col-6 text-end">
+                                        <h5 class="text-white">@Model.OrderTotal.ToString("c")</h5>
+                                    </div>
+                                </div>
+                            </li>
+                        </ul>
+                        @if (User.IsInRole(SD.RoleAdmin))
+                        {
+                            @if (Model.Status == SD.Status_Approved)
+                            {
+
+                                <button asp-action="OrderReadyForPickup" asp-route-orderId="@Model.OrderHeaderId" type="submit" class="btn btn-success form-control my-1">Ready for Pickup</button>
+                            }
+                            @if (Model.Status == SD.Status_ReadyForPickup)
+                            {
+                                <button asp-action="CompleteOrder" asp-route-orderId="@Model.OrderHeaderId" type="submit" class="btn btn-success form-control my-1">Complete Order</button>
+                            }
+                            @if (Model.Status == SD.Status_Approved || Model.Status == SD.Status_ReadyForPickup)
+                            {
+                                <button asp-action="CancelOrder" asp-route-orderId="@Model.OrderHeaderId" type="submit" class="btn btn-danger form-control my-1">Cancle Order</button>
+                            }
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>

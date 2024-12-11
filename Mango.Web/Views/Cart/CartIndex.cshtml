@@ -1,0 +1,172 @@
+﻿@model CartDto
+@if (Model.CartHeader != null && Model.CartDetails?.Count() > 0)
+{
+    <form method="post" asp-action="EmailCart">
+        <br />
+        <input asp-for="CartHeader.UserId" hidden />
+        <input asp-for="CartHeader.CartHeaderId" hidden />
+        <div class="">
+            <div class="card border mt-4 container mb-4">
+                <div style="background-color:white!important" class="card-header ml-0 row">
+                    <div style="margin:auto 0" class="col-6 p-0">
+                        <h3 class="text-success"><i class="bi bi-cart" style="font-size:20px;"></i> &nbsp; Shopping Cart</h3>
+                    </div>
+                    <div style="text-align:right" class="col-6 text-end">
+                        <a style="background-color:#cfa671" asp-action="Index" asp-controller="Product" class="btn btn-outline-warning mt-2 btn-sm text-white">Continue Shopping</a>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="d-none d-lg-block">
+                        <div class="row text-info">
+                            <div class="col-lg-2">
+                            </div>
+                            <div class="col-lg-5" style="font-size:16px;">
+                                Product Details
+                            </div>
+                            <div class="col-lg-2" style="font-size:16px;">
+                                Price
+                            </div>
+                            <div class="col-lg-2" style="font-size:16px;">
+                                Quantity
+                            </div>
+                            <div class="col-lg-1">
+                            </div>
+                        </div>
+                    </div>
+                    <hr />
+
+                    @foreach (var cartObj in Model.CartDetails)
+                    {
+                        <div class="row h-100 cartDetail" id="@cartObj.CartDetailsId">
+                            <div class="col-4 col-md-2 text-center py-2">
+                                <img src="@cartObj.Product.ImageUrl" class="rounded" width="100%" />
+                            </div>
+                            <div class="col-8 col-md-5">
+                                <h5>@cartObj.Product.Name</h5>
+                                <div style="font-size: 16px;">@Html.Raw(cartObj.Product.Description)</div>
+                            </div>
+                            <div class="col-3 col-md-2 pt-md-4" style="font-size:16px;">
+                                <span style="font-size: 16px;">@string.Format("{0:c}", cartObj.Product.Price) </span>
+                            </div>
+                            <div class="col-3 col-md-2 pt-md-4" style="font-size:16px;">
+                                <input class="cart-count  form-control  text-center" type="number" style="font-size: 17px;" value="@cartObj.Count" min="1">
+                            </div>
+                            <div class="col-2 col-lg-1 p-0 pt-lg-4 text-center">
+                                <a asp-action="Remove" asp-route-cartDetailsId="@cartObj.CartDetailsId" class="btn btn-sm btn-danger">
+                                    <i class="bi bi-trash-fill"></i>
+                                </a>
+                            </div>
+                        </div>
+
+                    }
+                    <hr />
+                    <div class="row">
+                        <div class="col-6 text-info">
+                            @if (string.IsNullOrEmpty(Model.CartHeader.CouponCode))
+                            {
+                                <span>Coupon:</span>
+                                <input asp-for="CartHeader.CouponCode" class="text-dark" />
+                                <button style="background-color:#cfa671" type="submit" asp-action="ApplyCoupon" class="btn btn-sm btn-success"> Apply </button>
+                            }
+                            else
+                            {
+                                <span>Coupon:</span>
+                                <input asp-for="CartHeader.CouponCode" class="text-dark" disabled />
+                                <button style="background-color:#cfa671" type="submit" asp-action="RemoveCoupon" class="btn btn-sm btn-success"> Remove </button>
+                            }
+
+                        </div>
+                        <div style="text-align:right" class="col-6">
+                            <span class="text-danger cart-total" style="font-size: 18px;"> Sub Total : @string.Format("{0:c}", Model.CartHeader.CartTotal + Model.CartHeader.Discount) <br /></span>
+                            @if (Model.CartHeader.Discount > 0)
+                            {
+                                <span class="text-danger cart-discount" style="font-size: 18px;"> Coupon Discount :  @string.Format("{0:c}", Model.CartHeader.Discount) <br /> </span>
+                            }
+                            <span class="text-success cart-total" style="font-size: 18px;"> Order Total : @string.Format("{0:c}", Model.CartHeader.CartTotal) <br /></span>
+                            
+                        </div>
+
+                    </div>
+                </div>
+                <div style="background-color:white!important" class="card-footer row justify-content-end">
+                    <div class="col-6 col-md-3 offset-md-6">
+                        <a style="background-color:#a3745e" asp-action="Checkout" class="btn form-control btn-success mt-2 btn-sm text-white">Checkout</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+}
+else
+{
+    <div class="container">
+        <div class="row justify-content-center align-items-center" style="min-height:400px">
+            <h1 class="border rounded p-5">Please add items to cart.</h1>
+        </div>
+    </div>
+}
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+@* Ajax cho so luong cua san pham trong gio hang *@
+<script>
+    $(document).ready(function () {
+        $(document).on("change", ".cart-count", function () {
+            if($(this).val() <= 0){
+                 $(this).val(1);
+            }
+            var cartDetailsId = $(this).closest('.cartDetail').attr('id');
+            var count = $(this).val();
+            var $inputToFocus = $(this); // Lưu input cần focus
+            $.ajax({
+                url: 'https://localhost:7003/api/cart/UpdateCartQuantity',
+                type: 'POST',
+                contentType: 'application/json',
+                data: JSON.stringify({ cartDetailsId: cartDetailsId, quantity: count }),
+                success: function (response) {
+                    console.log(response);
+                    var cartDto = response.result;
+                    // Update product details in the cart
+                    var cartObj = cartDto.cartDetails.find(c => c.cartDetailsId == cartDetailsId);
+                    var newCartDetailsContent = `
+                            <div class="col-4 col-md-2 text-center py-2">
+                                <img src="${cartObj.product.imageUrl}" class="rounded" width="100%" />
+                            </div>
+                            <div class="col-8 col-md-5">
+                                <h5>${cartObj.product.name}</h5>
+                                <div style="font-size: 11px;">${cartObj.product.description}</div>
+                            </div>
+                            <div class="col-3 col-md-2 pt-md-4" style="font-size:11px;">
+                                    <span style="font-size: 17px;">$${cartObj.product.price.toFixed(2)}</span> <!-- Format giá tiền -->
+                            </div>
+                            <div class="col-3 col-md-2 pt-md-4" style="font-size:11px;">
+                                    <input class="cart-count form-control text-center" type="number" style="font-size: 17px;" value="${cartObj.count}" min="1">
+                            </div>
+                            <div class="col-2 col-lg-1 p-0 pt-lg-4 text-center">
+                                <a asp-action="Remove" asp-route-cartDetailsId="${cartObj.cartDetailsId}" class="btn btn-sm btn-danger">
+                                        <i class="bi bi-trash-fill text-white"></i>
+                                </a>
+                            </div>
+                        `;
+
+
+
+                    $(`#${cartDetailsId}`).html(newCartDetailsContent);
+                    // Focus lại vào input số lượng của sản phẩm
+                    var $newInput = $(`#${cartDetailsId}`).find('.cart-count');
+                    $newInput.focus();
+
+                    // Update total and discount
+                    $(".cart-total").html(`Order Total : $${cartDto.cartHeader.cartTotal.toFixed(2)}`).append('<br/>');
+                    if (cartDto.cartHeader.discount > 0) {
+                        $(".cart-discount").text(`Order Discount : $${cartDto.cartHeader.discount.toFixed(2)}`);
+                    }
+
+                    $
+                },
+                error: function (xhr, status, error) {
+                    console.error('Error updating cart:', error);
+                }
+            });
+        });
+    });
+</script>

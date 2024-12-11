@@ -1,0 +1,254 @@
+﻿@using Mango.Web.Utility
+
+@model RegistrationRequestDto
+
+@{
+    if (User.IsInRole(SD.RoleAdmin))
+    {
+        Layout = "~/Views/Shared/_Layout_Admin.cshtml";
+    }
+    else
+    {
+        <style>
+            .gradient-custom-3 {
+                background: #d0a772;
+                background: -webkit-linear-gradient(to right, rgba(208, 167, 114, 0.5), rgba(224, 188, 146, 0.5), rgba(176, 139, 82, 0.5));
+                background: linear-gradient(to right, rgba(208, 167, 114, 0.5), rgba(224, 188, 146, 0.5), rgba(176, 139, 82, 0.5));
+            }
+
+            .gradient-custom-4 {
+                background: #d0a772;
+                background: -webkit-linear-gradient(to right, rgba(208, 167, 114, 1), rgba(224, 188, 146, 1), rgba(176, 139, 82, 1));
+                background: linear-gradient(to right, rgba(208, 167, 114, 1), rgba(224, 188, 146, 1), rgba(176, 139, 82, 1));
+            }
+
+            .bg-image {
+                background-image: url('https://i.pinimg.com/736x/9d/69/8c/9d698c73b121dba00141e8a6e654c046.jpg');
+                background-size: contain;
+                background-repeat: repeat;
+            }
+        </style>
+    }
+}
+<form method="post">
+    <section class="vh-100" style="background-color: #f8f5f2;">
+        <div class="mask d-flex align-items-center h-100">
+            <div class="container h-100" style="margin-top:25px; margin-bottom:50px;">
+                <div class="row d-flex justify-content-center align-items-center h-100">
+                    <div class="col-12 col-md-9 col-lg-8">
+                        <div class="card border-0 shadow-sm" style="border-radius: 15px;">
+                            <div class="card-body p-5">
+                                <h2 class="text-center mb-4" style="color: #a3745e;">Profile</h2>
+
+                                <div class="row">
+                                    <!-- Email Field (Single Row) -->
+                                    <div class="col-12 mb-4">
+                                        <label class="form-label" style="color: #a3745e;">Email</label>
+                                        <input readonly asp-for="Email" id="email" required name="email" type="email" class="form-control" placeholder="Enter Email..." style="border-color: #cfa671;" />
+                                        <span class="text-danger"></span>
+                                    </div>
+
+                                    <!-- First Name and Last Name (Side-by-Side) -->
+                                    <div class="col-md-6 mb-4">
+                                        <label class="form-label" style="color: #a3745e;">First Name</label>
+                                        <input asp-for="FirstName" id="firstName" required name="firstName" type="text" class="form-control" placeholder="Enter First Name..." style="border-color: #cfa671;" />
+                                        <span class="text-danger"></span>
+                                    </div>
+                                    <div class="col-md-6 mb-4">
+                                        <label class="form-label" style="color: #a3745e;">Last Name</label>
+                                        <input asp-for="LastName" id="lastName" required name="lastName" type="text" class="form-control" placeholder="Enter Last Name..." style="border-color: #cfa671;" />
+                                        <span class="text-danger"></span>
+                                    </div>
+
+                                    <!-- Gender and Birthday (Side-by-Side) -->
+                                    <div class="col-md-6 mb-4">
+                                        <label for="gender" class="form-label" style="color: #a3745e;">Gender</label>
+                                        <select asp-for="Gender" class="form-control" id="gender" aria-label="Select a gender" style="border-color: #cfa671;">
+                                            <option disabled selected value="">Select Gender</option>
+                                            <option selected="@(Model.Gender==true)" value="true">Male</option>
+                                            <option selected="@(Model.Gender==false)" value="false">Female</option>
+                                        </select>
+                                        <span class="text-danger"></span>
+                                    </div>
+                                    <div class="col-md-6 mb-4">
+                                        <label class="form-label" style="color: #a3745e;">Birthday</label>
+                                        <input id="birthday" asp-for="Birthday" required name="birthday" type="date" class="form-control" style="border-color: #cfa671;" />
+                                        <span class="text-danger"></span>
+                                    </div>
+
+                                    <!-- Phone (Single Row) -->
+                                    <div class="col-12 mb-4">
+                                        <label class="form-label" style="color: #a3745e;">Phone</label>
+                                        <input asp-for="PhoneNumber" id="phoneNumber" required name="phoneNumber" type="text" class="form-control" placeholder="Enter Phone..." style="border-color: #cfa671;" />
+                                        <span class="text-danger"></span>
+                                    </div>
+
+                                    <!-- Province/City (Single Row) -->
+                                    <div class="col-12 mb-4">
+                                        <label for="city" class="form-label" style="color: #a3745e;">Province/City</label>
+                                        <select class="form-control" id="city" aria-label="Select a province or city" style="border-color: #cfa671;">
+                                            <option value="">Select Province/City</option>
+                                        </select>
+                                        <span class="text-danger"></span>
+                                    </div>
+
+                                    <!-- District and Ward (Side-by-Side) -->
+                                    <div class="col-md-6 mb-4">
+                                        <label for="district" class="form-label" style="color: #a3745e;">District</label>
+                                        <select class="form-control" id="district" aria-label="Select a district" style="border-color: #cfa671;">
+                                            <option value="" selected>Select District</option>
+                                        </select>
+                                        <span class="text-danger"></span>
+                                    </div>
+                                    <div class="col-md-6 mb-4">
+                                        <label for="ward" class="form-label" style="color: #a3745e;">Ward</label>
+                                        <select class="form-control" id="ward" aria-label="Select a ward" style="border-color: #cfa671;">
+                                            <option value="" selected>Select Ward</option>
+                                        </select>
+                                        <span class="text-danger"></span>
+                                    </div>
+
+                                    <!-- Specific Address (Single Row) -->
+                                    <div class="col-12 mb-4">
+                                        <label for="specificAddress" class="form-label" style="color: #a3745e;">Specific Address</label>
+                                        <input id="specificAddress" name="specificAddress" type="text" class="form-control" placeholder="Enter Specific Address..." style="border-color: #cfa671;" />
+                                    </div>
+                                </div>
+
+                                <!-- Hidden Address and IsActive Fields -->
+                                <input hidden asp-for="Address" id="address" name="address" />
+                                <input hidden asp-for="IsActive" />
+
+                                <!-- Update Button -->
+                                <div>
+                                    <button id="updateButton" type="submit" class="btn form-control" style="background-color:#a3745e; color: white;height:50px">Update</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</form>
+
+
+
+@section Scripts {
+    <script src="~/js/jquery-3.2.1.min.js"></script>
+    <script src="~/js/validation/updateprofilevalidate.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.21.1/axios.min.js"></script>
+    <script>
+        // Elements for selects and address
+        var citis = document.getElementById("city");
+        var districts = document.getElementById("district");
+        var wards = document.getElementById("ward");
+        var specificAddress = document.getElementById("specificAddress");
+        var address = document.getElementById("address");
+
+        var Parameter = {
+            url: "https://raw.githubusercontent.com/kenzouno1/DiaGioiHanhChinhVN/master/data.json",
+            method: "GET",
+            responseType: "application/json",
+        };
+
+        let apiData; // Variable to hold fetched data
+
+        // Fetch provinces/cities
+        var promise = axios(Parameter);
+        promise.then(function (result) {
+            apiData = result.data; // Store fetched data
+            renderCity(apiData);
+
+            // Prepopulate selects and address when the page loads
+            populateAddress(address.value);
+        });
+
+        function renderCity(data) {
+            for (const x of data) {
+                citis.options[citis.options.length] = new Option(x.Name, x.Id);
+            }
+
+            citis.onchange = function () {
+                districts.length = 1;
+                wards.length = 1;
+                updateAddress();
+                if (this.value != "") {
+                    const result = data.filter(n => n.Id === this.value);
+                    for (const k of result[0].Districts) {
+                        districts.options[districts.options.length] = new Option(k.Name, k.Id);
+                    }
+                }
+            };
+
+            districts.onchange = function () {
+                wards.length = 1;
+                const dataCity = data.filter((n) => n.Id === citis.value);
+                updateAddress();
+                if (this.value != "") {
+                    const dataWards = dataCity[0].Districts.filter(n => n.Id === this.value)[0].Wards;
+                    for (const w of dataWards) {
+                        wards.options[wards.options.length] = new Option(w.Name, w.Id);
+                    }
+                }
+            };
+
+            wards.onchange = updateAddress;
+            specificAddress.onchange = updateAddress;
+        }
+
+        // Update address input value by concatenating the specific address, ward, district, and province/city
+        function updateAddress() {
+            var fullAddress = (specificAddress.value ? specificAddress.value + ", " : "") +
+                (wards.selectedIndex > 0 ? wards.options[wards.selectedIndex].text + ", " : "") +
+                (districts.selectedIndex > 0 ? districts.options[districts.selectedIndex].text + ", " : "") +
+                (citis.selectedIndex > 0 ? citis.options[citis.selectedIndex].text : "");
+
+            address.value = fullAddress;
+        }
+
+        // Prepopulate address components from the full address
+        function populateAddress(fullAddress) {
+            if (fullAddress) {
+                const addressParts = fullAddress.split(',').map(part => part.trim());
+
+                specificAddress.value = addressParts[0] || '';
+
+                // Reset dropdowns
+                wards.length = 1;
+                districts.length = 1;
+
+                // Set the values based on the address parts
+                const wardName = addressParts[1] || '';
+                const districtName = addressParts[2] || '';
+                const cityName = addressParts[3] || '';
+
+                // Find and set city
+                const city = apiData.find(x => x.Name === cityName);
+                if (city) {
+                    citis.value = city.Id;
+                    citis.onchange(); // Populate districts based on selected city
+                }
+
+                // Find and set district
+                const district = city?.Districts.find(d => d.Name === districtName);
+                console.log(district);
+
+                if (district) {
+                    districts.value = district.Id;
+                    districts.onchange(); // Populate wards based on selected district
+                }
+
+                // Find and set ward
+                const ward = district?.Wards.find(w => w.Name === wardName);
+                if (ward) {
+                    wards.value = ward.Id;
+                }
+
+                // Ensure the final address is updated
+                updateAddress();
+            }
+        }
+    </script>
+
+}

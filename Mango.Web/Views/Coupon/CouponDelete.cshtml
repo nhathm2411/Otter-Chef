@@ -1,0 +1,64 @@
+﻿@model CouponDto
+
+@{
+    Layout = "~/Views/Shared/_Layout_Admin.cshtml";
+}
+
+<form asp-action="CouponDelete">
+    <br />
+    <div class="container border p-4 shadow-sm" style="background-color: #f8f5f2;">
+        <h1 class="text-center" style="color: #a3745e;">Delete Coupon</h1>
+        <input asp-for="CouponId" hidden />
+        <hr class="mb-4" style="border-top: 3px solid #a3745e;" />
+
+        <div class="row">
+            <!-- Coupon Code Field -->
+            <div class="col-2">
+                <label class="control-label pt-2" style="font-size:20px; color: #a3745e;">Coupon Code</label>
+            </div>
+            <div class="col-10 pb-3">
+                <input asp-for="CouponCode" readonly class="form-control" style="border-color: #cfa671;" />
+            </div>
+
+            <!-- Discount Amount Field -->
+            <div class="col-2">
+                <label class="control-label pt-2" style="font-size:20px; color: #a3745e;">Discount Amount</label>
+            </div>
+            <div class="col-10 pb-3">
+                <input asp-for="DiscountAmount" readonly class="form-control" style="border-color: #cfa671;" />
+            </div>
+
+            <!-- Minimum Amount Field -->
+            <div class="col-2">
+                <label class="control-label pt-2" style="font-size:20px; color: #a3745e;">Minimum Amount</label>
+            </div>
+            <div class="col-10 pb-3">
+                <input asp-for="MinAmount" readonly class="form-control" style="border-color: #cfa671;" />
+            </div>
+
+            <!-- Quantity Field -->
+            <div class="col-2">
+                <label class="control-label pt-2" style="font-size:20px; color: #a3745e;">Quantity</label>
+            </div>
+            <div class="col-10 pb-3">
+                <input asp-for="Quantity" readonly class="form-control" style="border-color: #cfa671;" />
+            </div>
+
+            <!-- Image URL Field -->
+            <div class="col-2">
+                <label class="control-label pt-2" style="font-size:20px; color: #a3745e;">Image URL</label>
+            </div>
+            <div class="col-10 pb-3">
+                <input asp-for="ImageUrl" readonly class="form-control" style="border-color: #cfa671;" />
+            </div>
+
+            <!-- Buttons -->
+            <div class="col-5 offset-2">
+                <a asp-action="CouponIndex" class="btn form-control" style="background-color:#cfa671; color: white;">Back to List</a>
+            </div>
+            <div class="col-5">
+                <input type="submit" value="Delete" class="btn form-control" style="background-color: #a3745e; color: white;" />
+            </div>
+        </div>
+    </div>
+</form>

@@ -1,0 +1,46 @@
+﻿@model CategoryDto
+
+@{
+    Layout = "~/Views/Shared/_Layout_Admin.cshtml";
+}
+
+<form asp-action="CategoryCreate" enctype="multipart/form-data">
+    <br />
+    <div class="container border p-4 shadow-sm" style="background-color: #f8f5f2;">
+        <h1 class="text-center" style="color: #a3745e;">Create Category</h1>
+        <hr class="mb-4" style="border-top: 3px solid #a3745e;" />
+
+        <div class="row">
+            <!-- Category Name Field -->
+            <div class="col-2">
+                <label class="control-label pt-2" style="font-size:20px; color: #a3745e;">Category Name</label>
+            </div>
+            <div class="col-10 pb-3">
+                <input asp-for="CategoryName" class="form-control" style="border-color: #cfa671;" />
+                <span asp-validation-for="CategoryName" class="text-danger"></span>
+            </div>
+
+            <!-- Image Field -->
+            <div class="col-2">
+                <label class="control-label pt-2" style="font-size:20px; color: #a3745e;">Image</label>
+            </div>
+            <div class="col-10 pb-3">
+                <input asp-for="Image" type="file" class="form-control" style="border-color: #cfa671;" />
+                <input asp-for="ImageUrl" hidden />
+                <span asp-validation-for="Image" class="text-danger"></span>
+            </div>
+
+            <!-- Buttons -->
+            <div class="col-5 offset-2">
+                <a asp-action="CategoryIndex" class="btn form-control" style="background-color:#cfa671; color: white;">Back to List</a>
+            </div>
+            <div class="col-5">
+                <input type="submit" value="Create" class="btn form-control" style="background-color: #a3745e; color: white;" />
+            </div>
+        </div>
+    </div>
+</form>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

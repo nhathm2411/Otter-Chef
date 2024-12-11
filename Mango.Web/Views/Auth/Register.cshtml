@@ -1,0 +1,219 @@
+﻿@model RegistrationRequestDto
+
+<style>
+    .gradient-custom-3 {
+        background: linear-gradient(to right, rgba(208, 167, 114, 0.5), rgba(224, 188, 146, 0.5), rgba(176, 139, 82, 0.5));
+    }
+
+    .gradient-custom-4 {
+        background: linear-gradient(to right, rgba(208, 167, 114, 1), rgba(224, 188, 146, 1), rgba(176, 139, 82, 1));
+    }
+</style>
+
+<section class="vh-100 bg-image"
+         style="background-image: url('https://i.pinimg.com/736x/9d/69/8c/9d698c73b121dba00141e8a6e654c046.jpg');
+        background-size: contain;
+        background-repeat: repeat;">
+    <div class="mask d-flex align-items-center h-100 gradient-custom-3">
+        <div class="container h-100" style="margin-top:100px;margin-bottom:100px;">
+            <div class="row d-flex justify-content-center align-items-center h-100">
+                <div class="col-12 col-md-9 col-lg-8 col-xl-7">
+                    <div class="card" style="border-radius: 15px;">
+                        <div class="card-body p-5">
+                            <h2 class="text-uppercase text-center mb-2">Create an account</h2>
+
+                            <form method="post" id="registrationForm">
+                                <!-- Email Field -->
+                                <div class="form-outline mb-4">
+                                    <label class="form-label" for="Email">Email</label>
+                                    <input asp-for="Email" id="Email" type="email" class="form-control form-control-md" placeholder="Email" />
+                                    <span id="emailError" class="text-danger"></span>
+                                </div>
+
+                                <!-- Password and Confirm Password Fields Side by Side -->
+                                <div class="row">
+                                    <div class="col form-outline mb-4">
+                                        <label class="form-label" for="Password">Password</label>
+                                        <input asp-for="Password" id="Password" type="password" class="form-control form-control-md" placeholder="Password" />
+                                        <span id="passwordError" class="text-danger"></span>
+                                    </div>
+                                    <div class="col form-outline mb-4">
+                                        <label class="form-label" for="confirmPassword">Confirm Password</label>
+                                        <input id="confirmPassword" type="password" class="form-control form-control-md" placeholder="Confirm Password" />
+                                        <span class="text-danger" id="confirmPasswordError"></span>
+                                    </div>
+                                </div>
+
+                                <!-- First Name and Last Name Fields Side by Side -->
+                                <div class="row">
+                                    <div class="col form-outline mb-4">
+                                        <label class="form-label" for="FirstName">First Name</label>
+                                        <input asp-for="FirstName" id="FirstName" class="form-control form-control-md" placeholder="First Name" />
+                                        <span id="firstNameError" class="text-danger"></span>
+                                    </div>
+                                    <div class="col form-outline mb-4">
+                                        <label class="form-label" for="LastName">Last Name</label>
+                                        <input asp-for="LastName" id="LastName" class="form-control form-control-md" placeholder="Last Name" />
+                                        <span id="lastNameError" class="text-danger"></span>
+                                    </div>
+                                </div>
+
+                                <!-- Birthday Field -->
+                                <div class="form-outline mb-4">
+                                    <label class="form-label">Birthday</label>
+                                    <input asp-for="Birthday" id="birthday" required name="birthday" type="date" class="form-control form-control-md" />
+                                    <span class="text-danger"></span>
+                                </div>
+
+                                <!-- Gender and Phone Number Fields Side by Side -->
+                                <div class="row">
+                                    <div class="col form-outline mb-4">
+                                        <label for="gender" class="form-label">Gender</label>
+                                        <select asp-for="Gender" class="form-control form-control-md" id="gender" aria-label="Select a gender">
+                                            <option disabled selected value="">Select Gender</option>
+                                            <option value="true">Male</option>
+                                            <option value="false">Female</option>
+                                        </select>
+                                        <span class="text-danger"></span>
+                                    </div>
+                                    <div class="col form-outline mb-4">
+                                        <label class="form-label" for="PhoneNumber">Phone Number</label>
+                                        <input asp-for="PhoneNumber" id="PhoneNumber" type="tel" class="form-control form-control-md" placeholder="Phone Number" />
+                                        <span id="phoneError" class="text-danger"></span>
+                                    </div>
+                                </div>
+
+                                <!-- Province/City Field -->
+                                <div class="form-outline mb-4">
+                                    <label for="city" class="form-label">Province/City</label>
+                                    <select class="form-control form-control-md" id="city" aria-label="Select a province or city">
+                                        <option value="" selected>Select Province/City</option>
+                                    </select>
+                                    <span class="text-danger"></span>
+                                </div>
+
+                                <!-- District and Ward Fields Side by Side -->
+                                <div class="row">
+                                    <div class="col form-outline mb-4">
+                                        <label for="district" class="form-label">District</label>
+                                        <select class="form-control form-control-md" id="district" aria-label="Select a district">
+                                            <option value="" selected>Select District</option>
+                                        </select>
+                                        <span class="text-danger"></span>
+                                    </div>
+                                    <div class="col form-outline mb-4">
+                                        <label for="ward" class="form-label">Ward</label>
+                                        <select class="form-control form-control-md" id="ward" aria-label="Select a ward">
+                                            <option value="" selected>Select Ward</option>
+                                        </select>
+                                        <span class="text-danger"></span>
+                                    </div>
+                                </div>
+
+                                <!-- Specific Address Field -->
+                                <div class="form-outline mb-4">
+                                    <label for="specificAddress" class="form-label">Specific Address</label>
+                                    <input id="specificAddress" name="specificAddress" type="text" class="form-control form-control-md" placeholder="Specific Address" />
+                                </div>
+
+                                <!-- Hidden Address Field -->
+                                <input asp-for="Address" hidden id="address" name="address" />
+
+                                <!-- Terms Checkbox -->
+                                <div class="form-check mb-4">
+                                    <input type="checkbox" id="termsCheck" class="form-check-input">
+                                    <label class="form-check-label" for="termsCheck">I accept the <a href="#">Terms and Conditions</a></label>
+                                    <div class="text-danger" id="termsError"></div>
+                                </div>
+
+                                <!-- Register Button -->
+                                <div class="d-flex justify-content-center">
+                                    <button type="submit" class="btn btn-success btn-block btn-md gradient-custom-4 text-white">Register</button>
+                                </div>
+
+                                <!-- Login Link -->
+                                <p class="text-center text-muted mt-5 mb-0">
+                                    Already have an account? <a class="fw-bold text-body" asp-action="Login"><u>Login here</u></a>
+                                </p>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <script src="~/js/jquery-3.2.1.min.js"></script>
+    <script src="~/js/validation/registervalidate.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.21.1/axios.min.js"></script>
+    <script>
+        // Elements for selects and address
+        var citis = document.getElementById("city");
+        var districts = document.getElementById("district");
+        var wards = document.getElementById("ward");
+        var specificAddress = document.getElementById("specificAddress");
+        var address = document.getElementById("address");
+
+        var Parameter = {
+            url: "https://raw.githubusercontent.com/kenzouno1/DiaGioiHanhChinhVN/master/data.json",
+            method: "GET",
+            responseType: "application/json",
+        };
+
+        // Fetch provinces/cities
+        var promise = axios(Parameter);
+        promise.then(function (result) {
+            renderCity(result.data);
+        });
+
+        function renderCity(data) {
+            for (const x of data) {
+                citis.options[citis.options.length] = new Option(x.Name, x.Id);
+            }
+
+            citis.onchange = function () {
+                districts.length = 1;
+                wards.length = 1;
+                updateAddress();
+                if (this.value != "") {
+                    const result = data.filter(n => n.Id === this.value);
+
+                    for (const k of result[0].Districts) {
+                        districts.options[districts.options.length] = new Option(k.Name, k.Id);
+                    }
+                }
+            };
+
+            districts.onchange = function () {
+                wards.length = 1;
+                const dataCity = data.filter((n) => n.Id === citis.value);
+                updateAddress();
+                if (this.value != "") {
+                    const dataWards = dataCity[0].Districts.filter(n => n.Id === this.value)[0].Wards;
+
+                    for (const w of dataWards) {
+                        wards.options[wards.options.length] = new Option(w.Name, w.Id);
+                    }
+                }
+            };
+
+            wards.onchange = updateAddress;
+            specificAddress.onchange = updateAddress;
+        }
+
+        // Update address input value by concatenating the specific address, ward, district, and province/city
+        function updateAddress() {
+            var fullAddress = (specificAddress.value ? specificAddress.value + ", " : "") +
+                (wards.options[wards.selectedIndex].text != "Select Ward" ? wards.options[wards.selectedIndex].text + ", " : "") +
+                (districts.options[districts.selectedIndex].text != "Select District" ? districts.options[districts.selectedIndex].text + ", " : "") +
+                (citis.options[citis.selectedIndex].text != "Select Province/City" ? citis.options[citis.selectedIndex].text : "");
+
+            address.value = fullAddress;
+        }
+    </script>
+}

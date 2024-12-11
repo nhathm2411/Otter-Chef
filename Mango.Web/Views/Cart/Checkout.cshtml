@@ -1,0 +1,106 @@
+﻿@model CartDto
+@{
+    ApplicationUser userData = null;
+    if (ViewBag.User != null)
+    {
+         userData = ViewBag.User as ApplicationUser;
+    }
+}
+<form method="post">
+    <input asp-for="CartHeader.UserId" type="hidden" />
+    <input asp-for="CartHeader.CartHeaderId" type="hidden" />
+    <input asp-for="CartHeader.CouponCode" type="hidden" />
+    <input asp-for="CartHeader.Discount" type="hidden" />
+    <input asp-for="CartHeader.CartTotal" type="hidden" />
+
+    <div class="container mt-2 p-4">
+        <div class="card border mt-4 mb-4 px-4 py-4">
+            <!-- Thêm padding cho card -->
+            <div class="d-flex justify-content-between align-items-center">
+                <span style="font-size: 21px;" class="text-warning">Order Summary</span>
+                <a asp-action="RemoveCouponBeforeCart" style="background-color:#cfa671; color: white" class="btn btn-outline-warning">Back to Cart</a>
+            </div>
+            <hr />
+            <div class="row">
+                <div class="col-5">
+                    <div class="row pt-2">
+                        <div class="col-12 py-2">
+                            <input asp-for="CartHeader.Name" placeholder="Name..." class="form-control" style="margin-bottom: 10px;" value="@(userData.FirstName +" "+ userData.LastName)"/>
+                            <span asp-validation-for="CartHeader.Name" class="text-danger"></span>
+                        </div>
+                        <div class="col-12 py-2">
+                            <input asp-for="CartHeader.Email" placeholder="Email..." class="form-control" style="margin-bottom: 10px;" value="@userData.Email"/>
+                            <span asp-validation-for="CartHeader.Email" class="text-danger"></span>
+                        </div>
+                        <div class="col-12 py-2">
+                            <input asp-for="CartHeader.Phone" placeholder="Phone..." class="form-control" style="margin-bottom: 10px;" value="@userData.PhoneNumber" />
+                            <span asp-validation-for="CartHeader.Phone" class="text-danger"></span>
+                        </div>
+                        <div class="col-12 py-2">
+                            <label class="form-label">Order will be ready in 30 minutes after placing order. If you place order when restaurant is closed, it will be ready next day.</label>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-7">
+                    <div class="card mt-2 px-3 py-3">
+                        <div class="card-body">
+                            <div class="d-none d-lg-block">
+                                <div class="row text-danger">
+                                    <div class="col-6" style="font-size:16px;">
+                                        Product Details
+                                    </div>
+                                    <div class="col-3" style="font-size:16px;">
+                                        Price
+                                    </div>
+                                    <div class="col-3" style="font-size:16px;">
+                                        Quantity
+                                    </div>
+                                </div>
+                            </div>
+                            <hr />
+                            @foreach (var cartObj in Model.CartDetails)
+                            {
+                                <div class="row h-100">
+                                    <div class="col-6">
+                                        <span style="font-size:16px">@cartObj.Product.Name</span>
+                                    </div>
+                                    <div class="col-3">
+                                        <span style="font-size:16px">@cartObj.Product.Price.ToString("c")</span>
+                                    </div>
+                                    <div class="col-3">
+                                        <span style="font-size:16px">@cartObj.Count</span>
+                                    </div>
+                                </div>
+                            }
+                            <hr />
+                            <div class="row">
+                                <div class="col-12 pe-4 text-danger" style="text-align:right">
+                                    <span class="text-danger cart-total" style="font-size: 18px;"> Sub Total : @string.Format("{0:c}", Model.CartHeader.CartTotal + Model.CartHeader.Discount) <br /></span>
+                                    @if (Model.CartHeader.Discount > 0)
+                                    {
+                                        <span class="text-danger cart-discount" style="font-size: 18px;"> Coupon Discount :  @string.Format("{0:c}", Model.CartHeader.Discount) <br /> </span>
+                                    }
+                                    <span class="text-success cart-total" style="font-size: 18px;"> Order Total : @string.Format("{0:c}", Model.CartHeader.CartTotal) <br /></span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card-footer">
+                            <div class="row">
+                                <div class="col-12">
+                                    <button type="submit" class="btn btn-success form-control">
+                                        <span>Place Order</span>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}
